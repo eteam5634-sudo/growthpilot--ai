@@ -10,10 +10,9 @@ import { adminEmails, isAdminUser } from "@/lib/admin";
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
   const supabase = await createClient();
-  let [profile, settings] = await Promise.all([
-    getProfile(supabase, user.id),
-    getSettings(supabase, user.id).catch(() => null),
-  ]);
+  const settings = await getSettings(supabase, user.id).catch(() => null);
+
+let profile = await getProfile(supabase, user.id);
   const email = (user.email || "").toLowerCase();
   if (email && adminEmails().includes(email) && profile?.role !== "admin") {
     await supabase.from("users").update({ role: "admin" }).eq("id", user.id);
