@@ -40,5 +40,7 @@ export type WebsiteSnapshot = {
   phonesFound: number;
   wordCount: number;
   textSample: string;
+  hasRobotsTxt: boolean;
+  hasSitemap: boolean;
   error: string | null;
 };

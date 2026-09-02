@@ -1,13 +1,17 @@
 import { PricingGrid } from "@/components/marketing/pricing-grid";
+import { isPaystackConfigured } from "@/lib/paystack";
 
 export const metadata = { title: "Pricing" };
 
 function noticeFromSearch(value?: string) {
   if (value === "setup") {
-    return "Stripe is not configured yet. Add STRIPE_SECRET_KEY and price IDs, or contact us to upgrade manually.";
+    if (isPaystackConfigured()) {
+      return "Paystack is partially configured. Add PAYSTACK_PLAN_STARTER, PAYSTACK_PLAN_PROFESSIONAL, and PAYSTACK_PLAN_AGENCY plan codes.";
+    }
+    return "Payments are not configured yet. Add Paystack keys (Nigeria) or Stripe keys, or contact us to upgrade manually.";
   }
   if (value === "canceled") return "Checkout was canceled. You can try again whenever you are ready.";
-  if (value === "error") return "Checkout could not start. Check Stripe keys or try again.";
+  if (value === "error") return "Checkout could not start. Check your payment keys or try again.";
   return null;
 }
 
@@ -23,7 +27,7 @@ export default async function PricingPage({
         <p className="text-sm font-medium text-primary">Pricing</p>
         <h1 className="mt-2 text-4xl font-semibold tracking-tight">Free, Pro, and Agency</h1>
         <p className="mt-3 text-muted-foreground">
-          Start with 3 audits a month. Upgrade when you need competitor analysis and client volume.
+          Start with 5 audits a month on Free. Upgrade when you need more volume and competitor analysis.
         </p>
       </div>
       <div className="mt-12">

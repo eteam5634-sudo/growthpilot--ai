@@ -1,6 +1,6 @@
 import { overallFromCategories } from "@/lib/scores";
 import { hostnameFromUrl } from "@/lib/utils";
-import { getOpenAIClient } from "@/lib/openai/client";
+import { createChatCompletion, isAiConfigured } from "@/services/ai";
 import { fetchWebsiteSnapshot } from "@/services/website-analyzer";
 import {
   heuristicBrand,
@@ -68,12 +68,10 @@ export async function generateCompetitorComparison(
     trustElements: "Contact details, testimonials, and security cues are the fastest trust gaps to close.",
   };
 
-  const openai = getOpenAIClient();
-  if (!openai) return fallback;
+  if (!isAiConfigured()) return fallback;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const completion = await createChatCompletion({
       temperature: 0.3,
       response_format: { type: "json_object" },
       messages: [

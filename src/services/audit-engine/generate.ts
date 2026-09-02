@@ -1,6 +1,6 @@
 import { overallFromCategories } from "@/lib/scores";
-import { getOpenAIClient } from "@/lib/openai/client";
 import { clampScore } from "@/lib/utils";
+import { generateAuditWithAi } from "@/services/ai";
 import { fetchWebsiteSnapshot } from "@/services/website-analyzer";
 import {
   heuristicBrand,
@@ -10,7 +10,6 @@ import {
   heuristicUx,
 } from "@/services/audit-engine/heuristics";
 import { buildAuditPrompt } from "@/services/audit-engine/prompts";
-import { extractJson, parseAuditReport } from "@/services/audit-engine/schema";
 import type { NewAuditInput } from "@/types/audit";
 import type { AuditReportPayload, CategoryScores } from "@/types/report";
 
@@ -140,32 +139,14 @@ export async function generateAuditReport(input: NewAuditInput): Promise<AuditRe
   };
 
   const fallback = buildHeuristicReport(input, heuristics);
-  const openai = getOpenAIClient();
-
-  if (!openai) {
-    return roundScores(fallback);
-  }
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.4,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: "You are GrowthPilot AI, a precise growth auditor. Reply with JSON only.",
-        },
-        {
-          role: "user",
-          content: buildAuditPrompt({ business: input, snapshot, heuristics }),
-        },
-      ],
+    const aiReport = await generateAuditWithAi({
+      business: input,
+      snapshot,
+      heuristics,
     });
-
-    const content = completion.choices[0]?.message?.content;
-    if (!content) throw new Error("Empty model response");
-    return roundScores(parseAuditReport(extractJson(content)));
+    return roundScores(aiReport);
   } catch {
     return roundScores(fallback);
   }

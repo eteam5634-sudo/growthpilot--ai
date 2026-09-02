@@ -4,7 +4,6 @@ import { Logo } from "@/components/layout/logo";
 const product = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/demo", label: "Demo report" },
 ];
 const company = [
   { href: "/about", label: "About" },

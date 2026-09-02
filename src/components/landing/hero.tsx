@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, PlayCircle } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
@@ -28,41 +28,37 @@ export function Hero() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/demo">
-                <PlayCircle />
-                View Demo Report
+              <Link href="/pricing">
+                <Sparkles />
+                View Plans
               </Link>
             </Button>
           </div>
         </div>
-        <div className="animate-fade-up rounded-2xl border bg-card/80 p-5 shadow-xl backdrop-blur" style={{ animationDelay: "120ms" }}>
+        <div
+          className="animate-fade-up rounded-2xl border bg-card/80 p-5 shadow-xl backdrop-blur"
+          style={{ animationDelay: "120ms" }}
+        >
           <div className="mb-4 flex items-center justify-between text-sm">
-            <span className="font-medium">Business Score</span>
+            <span className="font-medium">What you get</span>
             <span className="text-muted-foreground">growthpilot.ai</span>
           </div>
-          <div className="mb-6 flex items-end gap-3">
-            <span className="text-6xl font-semibold tracking-tight text-primary">78</span>
-            <span className="mb-2 text-sm text-muted-foreground">/ 100 overall</span>
-          </div>
-          <div className="space-y-3">
+          <ul className="space-y-4 text-sm">
             {[
-              ["SEO", 82],
-              ["Conversion", 64],
-              ["UX", 76],
-              ["Trust", 71],
-              ["Brand", 80],
-            ].map(([label, score]) => (
-              <div key={String(label)}>
-                <div className="mb-1 flex justify-between text-xs">
-                  <span>{label}</span>
-                  <span className="text-muted-foreground">{score}</span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${score}%` }} />
-                </div>
-              </div>
+              "Live website crawl — SEO, UX, conversion, trust",
+              "AI-generated scores and executive summary",
+              "Prioritized recommendations and 30-day growth plan",
+              "PDF export and in-report AI consultant",
+            ].map((item) => (
+              <li key={item} className="flex gap-2 text-muted-foreground">
+                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                <span>{item}</span>
+              </li>
             ))}
-          </div>
+          </ul>
+          <p className="mt-6 text-xs text-muted-foreground">
+            Sign up free — 5 audits per month on the Free plan.
+          </p>
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { getOpenAIClient } from "@/lib/openai/client";
+import { createChatCompletion, isAiConfigured } from "@/services/ai";
 import type { AuditRow, ReportMessageRow } from "@/types/database";
 import type { ParsedReport, Recommendation } from "@/types/report";
 
@@ -132,16 +132,14 @@ function fallbackConsultantAnswer(input: ConsultantInput): string {
 }
 
 async function callOpenAI(input: ConsultantInput): Promise<string | null> {
-  const openai = getOpenAIClient();
-  if (!openai) return null;
+  if (!isAiConfigured()) return null;
 
   const prior = (input.history ?? []).slice(-8).map((message) => ({
     role: message.role as "user" | "assistant",
     content: message.content,
   }));
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+  const completion = await createChatCompletion({
     temperature: 0.3,
     max_tokens: 900,
     messages: [

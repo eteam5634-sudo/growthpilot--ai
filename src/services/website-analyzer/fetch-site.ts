@@ -53,6 +53,8 @@ export async function fetchWebsiteSnapshot(url: string): Promise<WebsiteSnapshot
     phonesFound: 0,
     wordCount: 0,
     textSample: "",
+    hasRobotsTxt: false,
+    hasSitemap: false,
     error: null,
   };
 
@@ -138,6 +140,14 @@ export async function fetchWebsiteSnapshot(url: string): Promise<WebsiteSnapshot
         .slice(0, 20)
     );
 
+    const origin = new URL(finalUrl).origin;
+    const [robotsRes, sitemapRes] = await Promise.all([
+      fetch(`${origin}/robots.txt`, { signal: controller.signal }).catch(() => null),
+      fetch(`${origin}/sitemap.xml`, { signal: controller.signal }).catch(() => null),
+    ]);
+    const hasRobotsTxt = Boolean(robotsRes?.ok);
+    const hasSitemap = Boolean(sitemapRes?.ok);
+
     return {
       url,
       finalUrl,
@@ -163,6 +173,8 @@ export async function fetchWebsiteSnapshot(url: string): Promise<WebsiteSnapshot
       phonesFound,
       wordCount: bodyText ? bodyText.split(" ").length : 0,
       textSample: bodyText.slice(0, 2500),
+      hasRobotsTxt,
+      hasSitemap,
       error: response.ok ? null : `Website responded with status ${response.status}`,
     };
   } catch (error) {

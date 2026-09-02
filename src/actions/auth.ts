@@ -54,8 +54,19 @@ export async function signInAction(_: unknown, formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: error.message };
+
+  const profile = await supabase
+    .from("users")
+    .select("account_status")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  if ((profile.data as { account_status?: string } | null)?.account_status === "suspended") {
+    await supabase.auth.signOut();
+    return { error: "Your account has been suspended. Contact support for help." };
+  }
 
   const next = String(formData.get("next") || "/dashboard");
   redirect(next.startsWith("/") ? next : "/dashboard");

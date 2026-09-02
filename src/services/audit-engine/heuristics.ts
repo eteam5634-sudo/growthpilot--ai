@@ -49,6 +49,20 @@ export function heuristicSeo(snapshot: WebsiteSnapshot): CategoryScore {
     weaknesses.push("No canonical tag was found.");
   }
 
+  if (snapshot.hasRobotsTxt) {
+    points += 8;
+    strengths.push("robots.txt is reachable for crawlers.");
+  } else {
+    weaknesses.push("No robots.txt found at the site root.");
+  }
+
+  if (snapshot.hasSitemap) {
+    points += 7;
+    strengths.push("sitemap.xml is published for indexation.");
+  } else {
+    weaknesses.push("No sitemap.xml detected at the site root.");
+  }
+
   if (snapshot.viewport) points += 5;
   else weaknesses.push("Viewport meta tag is missing, which hurts mobile indexing.");
 

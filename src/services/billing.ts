@@ -208,6 +208,13 @@ export async function recordPayment(
     stripePaymentIntent?: string;
   }
 ) {
+  const { data: existing } = await supabase
+    .from("payments")
+    .select("id")
+    .eq("stripe_payment_id", params.stripePaymentId)
+    .maybeSingle();
+  if (existing) return;
+
   await supabase.from("payments").insert({
     user_id: params.userId,
     stripe_payment_id: params.stripePaymentId,

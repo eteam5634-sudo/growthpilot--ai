@@ -60,7 +60,6 @@ export async function runAuditAction(_: unknown, formData: FormData) {
     clientId: parsed.data.clientId || null,
   });
   await trackEvent(supabase, user.id, "audit_started", { auditId: audit.id });
-  await incrementAuditUsage(supabase, user.id);
 
   try {
     const report = await generateAuditReport({
@@ -70,6 +69,7 @@ export async function runAuditAction(_: unknown, formData: FormData) {
       businessDescription: parsed.data.businessDescription || undefined,
     });
     await saveCompletedAudit(supabase, audit.id, report);
+    await incrementAuditUsage(supabase, user.id);
     await trackEvent(supabase, user.id, "audit_completed", { auditId: audit.id });
   } catch (error) {
     await markAuditFailed(
